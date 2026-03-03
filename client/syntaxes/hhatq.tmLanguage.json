@@ -1,0 +1,73 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "H-hat Quantum",
+  "scopeName": "source.hhatq",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#numbers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.hhatq",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.hhatq",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.hhatq",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.hhatq",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.hhatq",
+          "match": "\\b(fn|let|return|if|else|for|while)\\b"
+        },
+        {
+          "name": "keyword.other.quantum.hhatq",
+          "match": "\\b(qubit|gate|measure|reset)\\b"
+        },
+        {
+          "name": "support.function.quantum.hhatq",
+          "match": "\\b(H|X|Y|Z|S|T|RX|RY|RZ|CNOT|CZ|SWAP)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hhatq",
+          "match": "\\b\\d+(?:\\.\\d+)?\\b"
+        }
+      ]
+    }
+  }
+}

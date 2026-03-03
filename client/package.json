@@ -1,0 +1,57 @@
+{
+  "name": "hhat-vscode-extension",
+  "displayName": "H-hat Quantum Language",
+  "description": "VSCode extension (client) for H-hat quantum language LSP.",
+  "version": "0.0.1",
+  "publisher": "hhat",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:hhatq"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "hhatq",
+        "aliases": [
+          "H-hat Quantum",
+          "hhatq"
+        ],
+        "extensions": [
+          ".qpl",
+          ".hhatq"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "hhatq",
+        "scopeName": "source.hhatq",
+        "path": "./syntaxes/hhatq.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -p . -w",
+    "lint": "eslint .",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.2.1",
+    "eslint": "^9.20.1",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}
