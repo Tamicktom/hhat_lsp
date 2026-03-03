@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "H-hat Quantum",
+  "name": "H-hat",
   "scopeName": "source.hhatq",
   "patterns": [
     {
@@ -10,10 +10,22 @@
       "include": "#strings"
     },
     {
-      "include": "#keywords"
+      "include": "#main-block"
+    },
+    {
+      "include": "#declaration"
+    },
+    {
+      "include": "#builtins"
+    },
+    {
+      "include": "#types"
     },
     {
       "include": "#numbers"
+    },
+    {
+      "include": "#identifiers"
     }
   ],
   "repository": {
@@ -45,19 +57,39 @@
         }
       ]
     },
-    "keywords": {
+    "main-block": {
       "patterns": [
         {
-          "name": "keyword.control.hhatq",
-          "match": "\\b(fn|let|return|if|else|for|while)\\b"
-        },
+          "name": "keyword.control.entry.hhatq",
+          "match": "\\bmain\\b"
+        }
+      ]
+    },
+    "declaration": {
+      "patterns": [
         {
-          "name": "keyword.other.quantum.hhatq",
-          "match": "\\b(qubit|gate|measure|reset)\\b"
-        },
+          "name": "meta.assignment.hhatq",
+          "match": "(\\w+)\\s*(=)\\s*",
+          "captures": {
+            "1": { "name": "variable.other.hhatq" },
+            "2": { "name": "keyword.operator.assignment.hhatq" }
+          }
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
         {
-          "name": "support.function.quantum.hhatq",
-          "match": "\\b(H|X|Y|Z|S|T|RX|RY|RZ|CNOT|CZ|SWAP)\\b"
+          "name": "support.function.builtin.hhatq",
+          "match": "\\b(print)\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "storage.type.hhatq",
+          "match": "\\b(i8|i16|i32|i64|u8|u16|u32|u64|f32|f64)\\b"
         }
       ]
     },
@@ -66,6 +98,14 @@
         {
           "name": "constant.numeric.hhatq",
           "match": "\\b\\d+(?:\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.hhatq",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
         }
       ]
     }

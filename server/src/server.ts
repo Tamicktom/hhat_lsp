@@ -20,32 +20,42 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
 
-const KEYWORDS: Array<{ label: string; detail: string; documentation: string; kind: CompletionItemKind }> = [
+interface KnownSymbol {
+  label: string;
+  detail: string;
+  documentation: string;
+  kind: CompletionItemKind;
+}
+
+const KEYWORDS_AND_BUILTINS: KnownSymbol[] = [
   {
-    label: 'qubit',
-    detail: 'Quantum declaration',
-    documentation: 'Declares a qubit variable.',
+    label: 'main',
+    detail: 'Entry block',
+    documentation: 'Entry point. Defines the main block that runs when the program starts. Syntax: `main { ... }`.',
     kind: CompletionItemKind.Keyword,
   },
   {
-    label: 'measure',
-    detail: 'Quantum measurement',
-    documentation: 'Measures a qubit and collapses its state.',
-    kind: CompletionItemKind.Function,
-  },
-  {
-    label: 'H',
-    detail: 'Hadamard gate',
-    documentation: 'Creates superposition: |0> -> (|0> + |1>)/sqrt(2).',
-    kind: CompletionItemKind.Function,
-  },
-  {
-    label: 'CNOT',
-    detail: 'Controlled-NOT gate',
-    documentation: 'Flips target qubit when control qubit is |1>.',
+    label: 'print',
+    detail: 'Built-in function',
+    documentation: 'Prints a value. Example: `print(x)`.',
     kind: CompletionItemKind.Function,
   },
 ];
+
+const TYPES: KnownSymbol[] = [
+  { label: 'i8', detail: '8-bit signed integer', documentation: 'Signed 8-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'i16', detail: '16-bit signed integer', documentation: 'Signed 16-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'i32', detail: '32-bit signed integer', documentation: 'Signed 32-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'i64', detail: '64-bit signed integer', documentation: 'Signed 64-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'u8', detail: '8-bit unsigned integer', documentation: 'Unsigned 8-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'u16', detail: '16-bit unsigned integer', documentation: 'Unsigned 16-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'u32', detail: '32-bit unsigned integer', documentation: 'Unsigned 32-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'u64', detail: '64-bit unsigned integer', documentation: 'Unsigned 64-bit integer type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'f32', detail: '32-bit float', documentation: '32-bit floating-point type.', kind: CompletionItemKind.TypeParameter },
+  { label: 'f64', detail: '64-bit float', documentation: '64-bit floating-point type.', kind: CompletionItemKind.TypeParameter },
+];
+
+const ALL_KNOWN: KnownSymbol[] = [...KEYWORDS_AND_BUILTINS, ...TYPES];
 
 connection.onInitialize((params: InitializeParams): InitializeResult => {
   const result: InitializeResult = {
@@ -71,7 +81,7 @@ documents.onDidOpen((event) => {
 });
 
 connection.onCompletion((): CompletionItem[] => {
-  return KEYWORDS.map((item) => {
+  return ALL_KNOWN.map((item) => {
     const completionItem: CompletionItem = {
       label: item.label,
       kind: item.kind,
@@ -100,7 +110,7 @@ connection.onHover((params): Hover | null => {
     return null;
   }
 
-  const known = KEYWORDS.find((k) => k.label === word);
+  const known = ALL_KNOWN.find((k) => k.label === word);
   if (!known) {
     return null;
   }
@@ -113,25 +123,35 @@ connection.onHover((params): Hover | null => {
   };
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+function validateTextDocument(textDocument: TextDocument): void {
   const text = textDocument.getText();
   const diagnostics: Diagnostic[] = [];
 
-  const forbidden = 'collapse';
-  let index = text.indexOf(forbidden);
-  while (index !== -1) {
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: textDocument.positionAt(index),
-        end: textDocument.positionAt(index + forbidden.length),
-      },
-      message: 'Avoid using the word "collapse" directly. Prefer the "measure" keyword.',
-      source: 'hhatq',
-    };
+  if (!/\bmain\s*\{/.test(text)) {
+    diagnostics.push({
+      severity: DiagnosticSeverity.Information,
+      range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+      message: 'H-hat programs should have a main block: main { ... }',
+      source: 'hhat',
+    });
+  }
 
-    diagnostics.push(diagnostic);
-    index = text.indexOf(forbidden, index + forbidden.length);
+  const knownTypes = ['i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64'];
+  const declarationWithType = /\b[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*([a-zA-Z_][a-zA-Z0-9_]*)/g;
+  let match: RegExpExecArray | null;
+  while ((match = declarationWithType.exec(text)) !== null) {
+    const typeName = match[1];
+    if (!knownTypes.includes(typeName)) {
+      const typeStart = match.index + (match[0].length - typeName.length);
+      const start = textDocument.positionAt(typeStart);
+      const end = textDocument.positionAt(typeStart + typeName.length);
+      diagnostics.push({
+        severity: DiagnosticSeverity.Warning,
+        range: { start, end },
+        message: `Unknown type "${typeName}". Known types: ${knownTypes.join(', ')}.`,
+        source: 'hhat',
+      });
+    }
   }
 
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
@@ -142,7 +162,7 @@ function getWordAt(text: string, offset: number): string | null {
     return null;
   }
 
-  const isWordChar = (char: string) => /[A-Za-z_]/.test(char);
+  const isWordChar = (char: string) => /[A-Za-z0-9_]/.test(char);
 
   let start = offset;
   while (start > 0 && isWordChar(text[start - 1] ?? '')) {
@@ -160,4 +180,3 @@ function getWordAt(text: string, offset: number): string | null {
 
 documents.listen(connection);
 connection.listen();
-
