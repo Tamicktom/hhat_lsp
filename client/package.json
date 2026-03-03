@@ -24,8 +24,8 @@
           "hhatq"
         ],
         "extensions": [
-          ".qpl",
-          ".hhatq"
+          ".hat",
+          ".hhat"
         ],
         "configuration": "./language-configuration.json"
       }

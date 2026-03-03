@@ -28,7 +28,22 @@ npm run build
 
 - Open this workspace in VSCode
 - Press `F5` to launch **Run Extension (H-hat LSP)**
-- Create a file with extension `.qpl` or `.hhatq` to activate the language server
+- Create a file with extension `.hat` or `.hhat` to activate the language server
+
+### How to test the LSP (manual checklist)
+
+- **Build first**: run `npm run build` (or use the default build task)
+- **Start Extension Host**: press `F5` (a new VSCode window opens)
+- **Create a test file**: in the Extension Host window, create `test.hat`
+- **Check it activated**:
+  - Open **Output** panel
+  - Select **H-hat Quantum Language Server** (or **Log (Extension Host)**) and confirm there are no startup errors
+- **Test completion**:
+  - Type `H` or `CNOT` and use `Ctrl+Space`
+- **Test hover**:
+  - Hover `H`, `CNOT`, `qubit`, or `measure`
+- **Test diagnostics**:
+  - Type the word `collapse` anywhere in the file and confirm a warning appears
 
 ### Packaging (VSIX)
 

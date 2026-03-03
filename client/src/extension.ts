@@ -31,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const clientOptions: LanguageClientOptions = {
     documentSelector: [{ language: 'hhatq' }],
     synchronize: {
-      fileEvents: vscode.workspace.createFileSystemWatcher('**/*.{qpl,hhatq}'),
+      fileEvents: vscode.workspace.createFileSystemWatcher('**/*.{hat,hhat}'),
     },
   };
 
