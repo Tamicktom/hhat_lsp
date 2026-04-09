@@ -79,16 +79,16 @@ export interface ProgramNode {
   range: SourceRange;
 }
 
-export interface ImportNode {
-  type: 'Import';
-  categories: ImportCategoryNode[];
-  range: SourceRange;
-}
-
 export interface ImportCategoryNode {
   type: 'ImportCategory';
   category: string;
   paths: IdentifierNode[];
+  range: SourceRange;
+}
+
+export interface ImportNode {
+  type: 'Import';
+  categories: ImportCategoryNode[];
   range: SourceRange;
 }
 
