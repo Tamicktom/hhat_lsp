@@ -1,0 +1,12 @@
+// Importing external types, functions, and constants.
+
+use (
+  type: math.Vector3
+  fn: [io.read io.write]
+  const: config.MAX_RETRIES
+)
+
+main {
+  v:Vector3
+  print(v)
+}

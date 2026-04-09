@@ -1,0 +1,10 @@
+// Modifier definitions operate on an existing value via `self`.
+
+modifier doubled(self) i32 {
+  :: self
+}
+
+main {
+  x:i32 = 5
+  print(x)
+}

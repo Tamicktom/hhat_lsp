@@ -1,0 +1,8 @@
+type Point {
+  x:f64
+  y:f64
+}
+
+main {
+  p:Point
+}

@@ -1,0 +1,5 @@
+// The simplest H-hat program: a main block that prints a value.
+
+main {
+  print("Hello, world!")
+}

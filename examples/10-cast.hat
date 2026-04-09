@@ -1,0 +1,14 @@
+// Casting values between types with the * operator.
+
+main {
+  x:i32 = 42
+
+  // Cast integer to float
+  y:f64 = x * f64
+
+  // Cast literal to a different type
+  z:f32 = 100 * f32
+
+  print(y)
+  print(z)
+}

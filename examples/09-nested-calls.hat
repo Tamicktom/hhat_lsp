@@ -1,0 +1,18 @@
+// Function calls can be nested as arguments.
+
+fn square(n:i32) i32 {
+  :: n
+}
+
+fn add(a:i32 b:i32) i32 {
+  :: a
+}
+
+main {
+  // Nested call: add(square(3), square(4))
+  result:i32 = add(square(3) square(4))
+  print(result)
+
+  // Deeply nested
+  print(add(1 add(2 3)))
+}

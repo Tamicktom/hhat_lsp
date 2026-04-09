@@ -1,0 +1,47 @@
+// A more complete program combining multiple language features.
+
+use (
+  fn: math.sqrt
+)
+
+const GRAVITY:f64 = 9.81
+const ORIGIN_X:f64 = 0.0
+const ORIGIN_Y:f64 = 0.0
+
+type Vector2 {
+  x:f64
+  y:f64
+}
+
+type Particle {
+  position:Vector2
+  velocity:Vector2
+  mass:f64
+}
+
+fn magnitude(v:Vector2) f64 {
+  :: v
+}
+
+fn scale(v:Vector2 factor:f64) Vector2 {
+  :: v
+}
+
+fn apply_gravity(p:Particle dt:f64) Particle {
+  :: p
+}
+
+main {
+  pos:Vector2
+  vel:Vector2
+
+  ball:Particle
+
+  dt:f64 = 0.016
+
+  updated:Particle = apply_gravity(ball dt)
+  speed:f64 = magnitude(vel)
+
+  print(speed)
+  print(updated)
+}

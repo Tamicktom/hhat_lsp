@@ -1,0 +1,22 @@
+// All primitive numeric types available in H-hat.
+
+main {
+  // Signed integers
+  a:i8  = 127
+  b:i16 = 32000
+  c:i32 = 2000000
+  d:i64 = 9000000000
+
+  // Unsigned integers
+  e:u8  = 255
+  f:u16 = 65000
+  g:u32 = 4000000
+  h:u64 = 18000000000
+
+  // Floating point
+  i:f32 = 1.5
+  j:f64 = 3.141592653589793
+
+  print(a)
+  print(j)
+}

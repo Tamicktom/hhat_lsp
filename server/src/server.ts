@@ -17,6 +17,10 @@ import {
 //* TextDocument imports
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+//* Parser imports
+import { parse } from './parser';
+import type { ParseDiagnostic, DeclarationNode, StatementNode } from './parser';
+
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
 
@@ -123,38 +127,61 @@ connection.onHover((params): Hover | null => {
   };
 });
 
+const LSP_SEVERITY_MAP: Record<ParseDiagnostic['severity'], DiagnosticSeverity> = {
+  error: DiagnosticSeverity.Error,
+  warning: DiagnosticSeverity.Warning,
+  info: DiagnosticSeverity.Information,
+};
+
+const KNOWN_TYPES = new Set(['i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64']);
+
 function validateTextDocument(textDocument: TextDocument): void {
   const text = textDocument.getText();
+  const result = parse(text);
   const diagnostics: Diagnostic[] = [];
 
-  if (!/\bmain\s*\{/.test(text)) {
+  for (const d of result.diagnostics) {
     diagnostics.push({
-      severity: DiagnosticSeverity.Information,
-      range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
-      message: 'H-hat programs should have a main block: main { ... }',
+      severity: LSP_SEVERITY_MAP[d.severity],
+      range: {
+        start: { line: d.range.start.line, character: d.range.start.column },
+        end: { line: d.range.end.line, character: d.range.end.column },
+      },
+      message: d.message,
       source: 'hhat',
     });
   }
 
-  const knownTypes = ['i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64'];
-  const declarationWithType = /\b[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*([a-zA-Z_][a-zA-Z0-9_]*)/g;
-  let match: RegExpExecArray | null;
-  while ((match = declarationWithType.exec(text)) !== null) {
-    const typeName = match[1];
-    if (!knownTypes.includes(typeName)) {
-      const typeStart = match.index + (match[0].length - typeName.length);
-      const start = textDocument.positionAt(typeStart);
-      const end = textDocument.positionAt(typeStart + typeName.length);
-      diagnostics.push({
-        severity: DiagnosticSeverity.Warning,
-        range: { start, end },
-        message: `Unknown type "${typeName}". Known types: ${knownTypes.join(', ')}.`,
-        source: 'hhat',
-      });
+  // Semantic check: unknown types on declarations (grammar does not enforce type validity)
+  if (result.ast?.main) {
+    checkUnknownTypes(result.ast.main.body, diagnostics);
+  }
+  for (const def of result.ast?.definitions ?? []) {
+    if (def.type === 'FunctionDef') {
+      checkUnknownTypes(def.body, diagnostics);
     }
   }
 
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+}
+
+function checkUnknownTypes(statements: StatementNode[], diagnostics: Diagnostic[]): void {
+  for (const stmt of statements) {
+    if (stmt.type !== 'Declaration') continue;
+    const decl = stmt as DeclarationNode;
+    const typeName = decl.typeAnnotation.name;
+    if (!KNOWN_TYPES.has(typeName)) {
+      diagnostics.push({
+        severity: DiagnosticSeverity.Warning,
+        range: {
+          start: { line: decl.typeAnnotation.range.start.line, character: decl.typeAnnotation.range.start.column },
+          end: { line: decl.typeAnnotation.range.end.line, character: decl.typeAnnotation.range.end.column },
+        },
+        message: `Unknown type "${typeName}". Known types: ${[...KNOWN_TYPES].join(', ')}.`,
+        source: 'hhat',
+      });
+    }
+  }
 }
 
 function getWordAt(text: string, offset: number): string | null {

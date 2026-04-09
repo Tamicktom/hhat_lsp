@@ -1,0 +1,13 @@
+(* ===================================================================
+   H-hat Unified Grammar — Program entry point
+   ===================================================================
+   Composes every domain grammar into a single `program` rule.
+
+   Depends on:
+     core.ebnf       — imports, identifiers, literals, expressions
+     types.ebnf      — type_def
+     constants.ebnf  — consts
+     functions.ebnf  — group_fns, main
+   =================================================================== *)
+
+program = imports* ( type_def | consts | group_fns )* main? EOF

@@ -1,0 +1,36 @@
+(* ===================================================================
+   H-hat Functions & Main Grammar
+   ===================================================================
+   Depends on: core.ebnf (simple_id, full_id, type_id, modifier, expr,
+               assign, assign_ds, option, pointer, ref, variadic)
+   =================================================================== *)
+
+(* --- Main block ---------------------------------------------------- *)
+
+main                        = "main" body
+body                        = "{" ( declareassign | declareassign_ds | declare | assign | expr )* "}"
+
+(* --- Declarations -------------------------------------------------- *)
+
+declareassign               = simple_id modifier? ":" type_id "=" expr
+declareassign_ds            = simple_id modifier? ":" type_id "=" "." "{" assign+ "}"
+declare                     = simple_id modifier? ":" type_id
+
+(* --- Function definitions ------------------------------------------ *)
+
+group_fns                   = fn_def | metafn_def | modifier_def | supertype_def
+
+fn_def                      = "fn" ( simple_id | pointer ) fn_args type_id? fn_body
+fn_args                     = "(" argtype* ")"
+argtype                     = full_id ":" type_id
+fn_body                     = "{" ( fn_return | declareassign | declareassign_ds | declare | assign_ds | assign | expr )* "}"
+fn_return                   = "::" expr
+
+metafn_def                  = "metafn" simple_id fn_args type_id? metafn_body
+metafn_body                 = "{" ( fn_return | option | declareassign | declareassign_ds | declare | assign_ds | assign | expr )* "}"
+
+modifier_def                = "modifier" ( simple_id | pointer | ref | variadic ) modifier_args type_id metafn_body
+modifier_args               = "(" "self" argtype* ")"
+
+supertype_def               = "super-type" simple_id supertype_body
+supertype_body              = "{" full_id* "}"

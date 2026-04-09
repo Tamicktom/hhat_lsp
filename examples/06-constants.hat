@@ -1,0 +1,12 @@
+// Top-level constants defined before main.
+
+const PI:f64 = 3.14159265358979
+const MAX_SIZE:i32 = 1024
+const APP_NAME:i32 = "H-hat App"
+const DEBUG:i32 = true
+
+main {
+  print(PI)
+  print(MAX_SIZE)
+  print(APP_NAME)
+}

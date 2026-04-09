@@ -1,0 +1,6 @@
+const PI:f64 = 3.14159
+const MAX:i32 = 100
+
+main {
+  print(PI)
+}

@@ -1,0 +1,16 @@
+// This is a line comment.
+
+/*
+  This is a block comment.
+  It can span multiple lines.
+*/
+
+main {
+  // Comments can appear inside blocks too
+  x:i32 = 1 // inline comment after a statement
+
+  /* Block comment
+     between statements */
+
+  print(x)
+}

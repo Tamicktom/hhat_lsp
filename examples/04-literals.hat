@@ -1,0 +1,26 @@
+// Different kinds of literal values.
+
+main {
+  // Integer literals
+  count:i32 = 100
+  negative:i32 = -25
+
+  // Float literals
+  pi:f64 = 3.14159
+  small:f32 = 0.001
+
+  // Boolean literals
+  active:i32 = true
+  done:i32 = false
+
+  // String literals
+  name:i32 = "H-hat"
+  greeting:i32 = "Hello, world!"
+
+  // Array literal
+  nums:i32 = [1 2 3 4 5]
+
+  print(count)
+  print(pi)
+  print(name)
+}

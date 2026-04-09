@@ -1,0 +1,13 @@
+// Meta-functions: functions with named options in the body.
+
+metafn create_window(title:i32) i32 {
+  width: 800
+  height: 600
+  resizable: true
+  :: title
+}
+
+main {
+  window:i32 = create_window("Main Window")
+  print(window)
+}

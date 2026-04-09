@@ -1,0 +1,26 @@
+// Custom type (struct) definitions.
+
+// A 2D point with float coordinates.
+type Point {
+  x:f64
+  y:f64
+}
+
+// A rectangle defined by two corners.
+type Rect {
+  top_left:Point
+  bottom_right:Point
+}
+
+// A color with RGBA channels.
+type Color {
+  r:u8
+  g:u8
+  b:u8
+  a:u8
+}
+
+main {
+  origin:Point
+  print(origin)
+}

@@ -1,0 +1,25 @@
+// Super-types group multiple types under a common umbrella.
+
+type Circle {
+  radius:f64
+}
+
+type Square {
+  side:f64
+}
+
+type Triangle {
+  base:f64
+  height:f64
+}
+
+super-type Shape {
+  Circle
+  Square
+  Triangle
+}
+
+main {
+  s:Shape
+  print(s)
+}

@@ -1,0 +1,26 @@
+// Function definitions with parameters and return values.
+
+// A function that returns the sum of two integers.
+fn add(a:i32 b:i32) i32 {
+  :: a
+}
+
+// A function with no return type (side-effect only).
+fn greet(name:i32) {
+  print(name)
+}
+
+// A function with a single parameter.
+fn double(x:i32) i32 {
+  :: x
+}
+
+main {
+  result:i32 = add(10 20)
+  print(result)
+
+  greet("H-hat user")
+
+  d:i32 = double(5)
+  print(d)
+}

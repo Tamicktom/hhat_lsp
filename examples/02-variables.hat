@@ -1,0 +1,18 @@
+// Variable declarations, type annotations, and assignments.
+
+main {
+  // Declare and assign in one step
+  x:i32 = 10
+  y:f64 = 3.14
+
+  // Declare first, assign later
+  z:u64
+  z = 42
+
+  // Reassignment
+  x = 20
+
+  print(x)
+  print(y)
+  print(z)
+}
