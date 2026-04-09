@@ -1,0 +1,37 @@
+program                     = imports* consts* EOF
+imports                     = "use" "(" ( type_import | fn_import | metafn_import | modifier_import | supertype_import | const_import )+ ")"
+type_import                 = "type" ":" ( single_import | many_imports )
+fn_import                   = "fn" ":" ( single_import | many_imports )
+metafn_import               = "metafn" ":" ( single_import | many_imports )
+modifier_import             = "modifier" ":" ( single_import | many_imports )
+supertype_import            = "super-type" ":" ( single_import | many_imports )
+const_import                = "const" ":" ( single_import | many_imports )
+single_import               = composite_id_with_closure | full_id
+many_imports                = "[" single_import+ "]"
+composite_id_with_closure   = full_id "." "{" ( composite_id_with_closure | composite_id | full_id )+ "}"
+composite_id                = simple_id ( "." simple_id )+
+full_id                     = ( composite_id | simple_id ) modifier?
+simple_id                   = r"(\#\!\%\@)?[a-zA-Z][a-zA-Z0-9\-_]*"
+modifier                    = "<" ( ref | pointer | variadic | (callargs | simple_id)+ ) ">"
+ref                         = "&"
+pointer                     = "*"
+variadic                    = "..."
+callargs                    = full_id "=" valonly
+valonly                     = array | full_id | literal
+array                       = "[" ( literal | composite_id_with_closure | full_id )* "]"
+literal                     = (bool_t | int_t | float_t | str_t ) modifier?
+bool_t                      = r"(\#\!\%\@)?(true|false)"
+int_t                       = r"(\#\!\%\@)?(-)?([1-9][0-9]*|0)"
+float_t                     = r"(\#\!\%\@)?(-)?(0|[1-9][0-9]*[.][0-9]+)"
+str_t                       = r"(\#\!\%\@)?\"([^]*)\"" 
+consts                      = "const" simple_id ":" type_id "=" expr
+expr                        = cast | assign_ds | call_optn | call_optbdn | call_bdn | call | array | full_id | literal
+cast                        = ( call | literal | full_id ) "*" type_id
+call_optn                   = full_id "(" option+ ")"
+call_optbdn                 = full_id "(" args* ")" "{" option+ "}"
+call_bdn                    = full_id "(" args* ")" body
+call                        = full_id "(" args* ")" modifier?
+args                        = ( callargs | cast | call | valonly )
+assign                      = full_id "=" expr
+assign_ds                   = full_id "." "{" ( assign+ | expr+ ) "}"
+type_id                     = ( "[" full_id "]" ) | full_id
